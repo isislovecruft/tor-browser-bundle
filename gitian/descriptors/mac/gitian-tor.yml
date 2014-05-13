@@ -41,6 +41,7 @@ files:
 #- "apple-x86-odcctools_758.159-0flosoft11_i386.deb"
 script: |
   INSTDIR="$HOME/install"
+  TBDIR="$INSTDIR/TorBrowserBundle.app/TorBrowser"
   source versions
   export LIBRARY_PATH="$INSTDIR/lib"
   export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
@@ -57,8 +58,8 @@ script: |
   export LDFLAGS="-L/usr/lib/apple/SDKs/MacOSX10.6.sdk/usr/lib/ -L/usr/lib/apple/SDKs/MacOSX10.6.sdk/usr/lib/system/ -mmacosx-version-min=10.5"
   #
   mkdir -p $INSTDIR/bin/
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Tor/
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Data/Tor/
+  mkdir -p $TBDIR/Tor/
+  mkdir -p $TBDIR/Data/Tor/
   mkdir -p $OUTDIR/
   #
   sudo dpkg -i *.deb
@@ -81,7 +82,7 @@ script: |
   ./Configure --cross-compile-prefix=i686-apple-darwin11- $CFLAGS darwin-i386-cc --prefix=$INSTDIR/openssl #enable-ec_nistp_64_gcc_128
   make # SHARED_LDFLAGS="-shared -dynamiclib -L/usr/lib/apple/SDKs/MacOSX10.6.sdk/usr/lib/"
   make install
-  #cp $INSTDIR/openssl/lib/*.dylib $INSTDIR/TorBrowserBundle.app/Tor/
+  #cp $INSTDIR/openssl/lib/*.dylib $TBDIR/Tor/
   cd ..
   #
   cd libevent
@@ -90,7 +91,7 @@ script: |
   ./configure --disable-static --host=i686-apple-darwin11 --prefix=$INSTDIR/libevent
   make $MAKEOPTS
   make install
-  cp $INSTDIR/libevent/lib/libevent-*.dylib $INSTDIR/TorBrowserBundle.app/Tor/
+  cp $INSTDIR/libevent/lib/libevent-*.dylib $TBDIR/Tor/
   LIBEVENT_FILE=`basename $INSTDIR/libevent/lib/libevent-*.dylib`
   cd ..
   #
@@ -125,9 +126,9 @@ script: |
   make $MAKEOPTS
   make install
   cd ..
-  cp $INSTDIR/bin/tor $INSTDIR/TorBrowserBundle.app/Tor/
-  cp $INSTDIR/share/tor/geoip $INSTDIR/TorBrowserBundle.app/Data/Tor/
-  cd $INSTDIR/TorBrowserBundle.app/Tor/
+  cp $INSTDIR/bin/tor $TBDIR/Tor/
+  cp $INSTDIR/share/tor/geoip $TBDIR/Data/Tor/
+  cd $TBDIR/Tor/
   i686-apple-darwin11-install_name_tool -change /home/ubuntu/install/libevent/lib/$LIBEVENT_FILE @executable_path/$LIBEVENT_FILE tor
   # XXX: Geoip files..
   #

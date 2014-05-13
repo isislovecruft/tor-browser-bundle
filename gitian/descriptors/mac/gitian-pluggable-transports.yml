@@ -46,7 +46,8 @@ files:
 #- "apple-x86-odcctools_758.159-0flosoft11_i386.deb"
 script: |
   INSTDIR="$HOME/install"
-  PTDIR="$INSTDIR/TorBrowserBundle.app/Tor/PluggableTransports"
+  TBDIR="$INSTDIR/TorBrowserBundle.app/TorBrowser"
+  PTDIR="$TBDIR/Tor/PluggableTransports"
   export LIBRARY_PATH="$INSTDIR/lib"
   export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
   export FAKETIME=$REFERENCE_DATETIME
@@ -83,7 +84,7 @@ script: |
   ./configure --host=i686-apple-darwin11 --prefix=$INSTDIR/gmp --disable-static --enable-shared --enable-cxx
   make
   make install
-  cp $INSTDIR/gmp/lib/*dylib* $INSTDIR/TorBrowserBundle.app/Tor/
+  cp $INSTDIR/gmp/lib/*dylib* $TBDIR/Tor/
   cd ..
   #
   cd pyptlib
@@ -156,8 +157,8 @@ script: |
   python setup.py build --build-lib build
   cp -a build/obfsproxy $PTDIR/
   cp -a bin/obfsproxy $PTDIR/obfsproxy.bin
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Docs/Obfsproxy
-  cp -a {LICENSE,README} $INSTDIR/TorBrowserBundle.app/Docs/Obfsproxy
+  mkdir -p $TBDIR/Docs/Obfsproxy
+  cp -a {LICENSE,README} $TBDIR/Docs/Obfsproxy
   cd ..
   #
   tar xzf openssl.tar.gz
@@ -166,7 +167,7 @@ script: |
   CC=cc ./Configure --cross-compile-prefix=i686-apple-darwin11- $CFLAGS darwin-i386-cc --prefix=$INSTDIR/openssl
   make # SHARED_LDFLAGS="-shared -dynamiclib -L/usr/lib/apple/SDKs/MacOSX10.6.sdk/usr/lib/"
   make install
-  #cp $INSTDIR/openssl/lib/*.dylib $INSTDIR/TorBrowserBundle.app/Tor/
+  #cp $INSTDIR/openssl/lib/*.dylib $TBDIR/Tor/
   cd ..
   #
   tar xzf m2crypto.tar.gz
@@ -187,25 +188,25 @@ script: |
   find -type f | xargs touch --date="$REFERENCE_DATETIME"
   make dist DISTNAME=flashproxy-client
   cp -a dist/flashproxy-client/{flashproxy,flashproxy-client,flashproxy-reg-appspot,flashproxy-reg-email,flashproxy-reg-http,flashproxy-reg-url} $PTDIR/
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Docs/FlashProxy
-  cp -a {doc/*,README,LICENSE,ChangeLog} $INSTDIR/TorBrowserBundle.app/Docs/FlashProxy
+  mkdir -p $TBDIR/Docs/FlashProxy
+  cp -a {doc/*,README,LICENSE,ChangeLog} $TBDIR/Docs/FlashProxy
   cd ..
   #
   cd libfte
   find -type f | xargs touch --date="$REFERENCE_DATETIME"
   CFLAGS="-L$INSTDIR/Tor -I$INSTDIR/gmp/include $CFLAGS" CXXFLAGS="-L$INSTDIR/Tor -I$INSTDIR/gmp/include $CXXFLAGS" make
   cp -ra fte $PTDIR/
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Docs/libfte
-  cp -a {LICENSE,README.md} $INSTDIR/TorBrowserBundle.app/Docs/libfte
-  cp -an thirdparty/re2/LICENSE $INSTDIR/TorBrowserBundle.app/Docs/libfte/LICENSE.re2
+  mkdir -p $TBDIR/Docs/libfte
+  cp -a {LICENSE,README.md} $TBDIR/Docs/libfte
+  cp -an thirdparty/re2/LICENSE $TBDIR/Docs/libfte/LICENSE.re2
   cd ..
   #
   cd fteproxy
   find -type f | xargs touch --date="$REFERENCE_DATETIME"
   cp -a bin/fteproxy $PTDIR/fteproxy.bin
   cp -ra fteproxy $PTDIR/
-  mkdir -p $INSTDIR/TorBrowserBundle.app/Docs/fteproxy
-  cp -a {COPYING,README.md} $INSTDIR/TorBrowserBundle.app/Docs/fteproxy
+  mkdir -p $TBDIR/Docs/fteproxy
+  cp -a {COPYING,README.md} $TBDIR/Docs/fteproxy
   cd ..
   #
   cd $INSTDIR
