@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TBB_START_PROG="$(grep '^X-TorBrowser-ExecShell' $1 | tail -1 | sed 's/^X-TorBrowser-ExecShell=//' | sed 's/%.//')"
+
+shift
+
+eval "${TBB_START_PROG}"
