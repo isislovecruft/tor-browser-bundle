@@ -93,9 +93,6 @@ script: |
   export GOARCH=amd64
   tar xvf go.tar.gz
   cd go/src
-  # Remove a preprocessor directive that causes problems when building with the 10.7 SDK.
-  # https://github.com/golang/go/issues/17732
-  sed -i -e '/^#cgo CFLAGS:/s/-D__MAC_OS_X_VERSION_MAX_ALLOWED=1060//' crypto/x509/root_cgo_darwin.go
   CGO_ENABLED=1 CC_FOR_TARGET="$CC_FOR_TARGET" CC= CFLAGS= LDFLAGS= ./make.bash
   cd ../..
   export PATH="$PATH:$PWD/go/bin"
