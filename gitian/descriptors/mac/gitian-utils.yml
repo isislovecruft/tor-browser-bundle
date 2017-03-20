@@ -23,7 +23,7 @@ remotes:
 - "url": "https://cmake.org/cmake.git"
   "dir": "cmake"
 files:
-- "apple-uni-sdk-10.6_20110407-0.flosoft1_i386.deb"
+- "MacOSX10.7.sdk.tar.gz"
 - "openssl.tar.gz"
 - "cctools.tar.gz"
 - "versions"
@@ -65,8 +65,7 @@ script: |
   export FAKETIME=$REFERENCE_DATETIME
 
   cd ..
-  ar x apple-uni-sdk-10.6_20110407-0.flosoft1_i386.deb
-  tar xaf data.tar.gz
+  tar xaf MacOSX10.7.sdk.tar.gz
   tar xaf cctools.tar.gz
 
   # Preparing clang for cross-compilation, setting the proper flags and
@@ -75,7 +74,7 @@ script: |
   export LD_LIBRARY_PATH="$INSTDIR/clang/lib"
   export PATH="$HOME/build/cctools/bin:$PATH"
   CROSS_CCTOOLS_PATH="$HOME/build/cctools"
-  CROSS_SYSROOT="$HOME/build/usr/lib/apple/SDKs/MacOSX10.6.sdk"
+  CROSS_SYSROOT="$HOME/build/MacOSX10.7.sdk"
   FLAGS="-target x86_64-apple-darwin10 -mlinker-version=136 -B $CROSS_CCTOOLS_PATH/bin -isysroot $CROSS_SYSROOT"
   export CC="$INSTDIR/clang/bin/clang $FLAGS"
   export LDFLAGS="-Wl,-syslibroot,$CROSS_SYSROOT -Wl,-dead_strip"
