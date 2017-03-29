@@ -26,6 +26,7 @@ remotes:
 files:
 - "binutils.tar.bz2"
 - "gcc.tar.bz2"
+- "yasm.tar.gz"
 - "openssl.tar.gz"
 - "gmp.tar.bz2"
 - "enable-reloc-section-ld.patch"
@@ -48,6 +49,15 @@ script: |
   tar xjf gcc.tar.bz2
   cd gcc-*
   ./configure --prefix=$INSTDIR/gcc --disable-multilib --enable-languages=c,c++
+  make $MAKEOPTS
+  make install
+  cd ..
+
+  # Building Yasm to use it for our Firefox compilation later. Firefox ESR52
+  # requires Yasm >= 1.2.0 which Ubuntu Precise does not ship.
+  tar xaf yasm.tar.gz
+  cd yasm-*
+  ./configure --prefix=$INSTDIR/yasm
   make $MAKEOPTS
   make install
   cd ..
@@ -186,6 +196,7 @@ script: |
   # We might want to bump binutils independent of bumping mingw-w64.
   touch binutils-$BINUTILS_VER-win32-utils.zip
   ~/build/dzip.sh gcc-$GCC_VER-linux32-precise-utils.zip gcc
+  ~/build/dzip.sh yasm-$YASM_VER-linux32-precise-utils.zip yasm
   ~/build/dzip.sh mingw-w64-$GCC_VER-win32-utils.zip mingw-w64
   ~/build/dzip.sh zlib-${ZLIB_TAG#v}-win32-utils.zip zlib
   ~/build/dzip.sh libevent-${LIBEVENT_TAG#release-}-win32-utils.zip libevent

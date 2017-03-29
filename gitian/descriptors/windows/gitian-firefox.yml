@@ -6,7 +6,6 @@ architectures:
 packages:
 - "unzip"
 - "autoconf2.13"
-- "yasm"
 - "zip"
 reference_datetime: "2000-01-01 00:00:00"
 remotes:
@@ -14,6 +13,7 @@ remotes:
   "dir": "tor-browser"
 files:
 - "gcc-linux32-precise-utils.zip"
+- "yasm-linux32-precise-utils.zip"
 - "mingw-w64-win32-utils.zip"
 - "get-moz-build-date"
 - "re-dzip.sh"
@@ -34,6 +34,8 @@ script: |
   #
   mkdir -p $INSTDIR/Browser/
   mkdir -p $OUTDIR/
+  # Firefox ESR52 needs Yasm >= 1.2.0 which Ubuntu Precise does not ship.
+  unzip -d $INSTDIR yasm-linux32-precise-utils.zip
   unzip -d $INSTDIR gcc-linux32-precise-utils.zip
   # We need a link to our GCC, otherwise the system cc gets used which points to
   # /usr/bin/gcc.
@@ -42,7 +44,7 @@ script: |
   unzip -d $INSTDIR gcclibs-win32-utils.zip
   # Make sure our custom mingw and GCC (as host compiler) get used.
   export LD_LIBRARY_PATH=$INSTDIR/gcc/lib
-  export PATH=$INSTDIR/mingw-w64/bin:$INSTDIR/gcc/bin:$PATH
+  export PATH=$INSTDIR/mingw-w64/bin:$INSTDIR/gcc/bin:$INSTDIR/yasm/bin:$PATH
 
   # We don't want to link against msvcrt.dll due to bug 9084.
   i686-w64-mingw32-g++ -dumpspecs > msvcr100.spec
