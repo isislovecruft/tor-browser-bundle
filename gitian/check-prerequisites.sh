@@ -15,6 +15,7 @@ DISTRO=`cat /etc/issue | grep -Eo 'Ubuntu|Debian*'`
 if [ $DISTRO = "Ubuntu" ];
 then
   VERSION=`cat /etc/issue | grep -Eo '[0-9]{2}' | head -1`
+  FULL_VERSION=`cat /etc/issue | grep -Eo '[0-9.]+' | head -1`
   if [ "$VERSION" -ge "14" ];
   then
     dpkg -s ruby apache2 git apt-cacher-ng qemu-kvm virt-what lxc lxctl fakeroot faketime zip unzip subversion debian-archive-keyring curl pkg-config libgtk2.0-dev libglib2.0-dev torsocks tor 2>/dev/null >/dev/null
@@ -124,7 +125,15 @@ then
   then
     libvirt_group=libvirt
   else
-    libvirt_group=libvirtd
+    if [ "$FULL_VERSION" = "16.10" ];
+    then
+      libvirt_group=libvirt
+    elif [ "$VERSION" -gt "16" ];
+    then
+      libvirt_group=libvirt
+    else
+      libvirt_group=libvirtd
+    fi
   fi
   groups | grep $libvirt_group > /dev/null
   if [ $? -ne 0 ];
