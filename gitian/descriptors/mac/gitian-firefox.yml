@@ -2,7 +2,7 @@
 name: "torbrowser-mac"
 distro: "debian"
 suites:
-- "wheezy"
+- "jessie"
 architectures:
 - "amd64"
 packages:
@@ -16,7 +16,7 @@ remotes:
 - "url": "https://git.torproject.org/tor-browser.git"
   "dir": "tor-browser"
 files:
-- "clang-linux64-wheezy-utils.zip"
+- "clang-linux64-jessie-utils.zip"
 - "cctools.tar.gz"
 - "MacOSX10.7.sdk.tar.gz"
 - "get-moz-build-date"
@@ -39,7 +39,7 @@ script: |
   # Extracting all the necessary tools
   tar xaf ../MacOSX10.7.sdk.tar.gz
   tar xaf ../cctools.tar.gz
-  unzip ../clang-linux64-wheezy-utils.zip
+  unzip ../clang-linux64-jessie-utils.zip
   # Bug 20439: build with PIE
   # If we add -fPIE to the FLAGS, the build fails in js/src/ctypes/libffi
   # with libtool giving an error:
@@ -96,7 +96,6 @@ script: |
   ~/build/fix-info-plist.py $TORBROWSER_VERSION $COPYRIGHT_YEAR < tmp.plist > $INFO_PLIST
   rm -f tmp.plist
   ~/build/re-dzip.sh TorBrowser.app/Contents/Resources/omni.ja
-  ~/build/re-dzip.sh TorBrowser.app/Contents/Resources/webapprt/omni.ja
   ~/build/re-dzip.sh TorBrowser.app/Contents/Resources/browser/omni.ja
   cd TorBrowser.app/
   ~/build/dzip.sh tor-browser-mac${GBUILD_BITS}-gbuilt.zip ./Contents

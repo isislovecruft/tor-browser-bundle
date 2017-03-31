@@ -2,7 +2,7 @@
 name: "bundle-mac"
 distro: "debian"
 suites:
-- "wheezy"
+- "jessie"
 architectures:
 - "amd64"
 packages:

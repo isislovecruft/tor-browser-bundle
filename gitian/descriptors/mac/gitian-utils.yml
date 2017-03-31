@@ -2,11 +2,10 @@
 name: "utils-mac"
 distro: "debian"
 suites:
-- "wheezy"
+- "jessie"
 architectures:
 - "amd64"
 packages:
-- "faketime"
 - "automake"
 - "libtool"
 - "zip"
@@ -16,14 +15,14 @@ remotes:
   "dir": "libevent"
 - "url": "https://github.com/wolfcw/libfaketime"
   "dir": "faketime"
-- "url": "https://github.com/llvm-mirror/llvm"
-  "dir": "llvm"
-- "url": "https://github.com/llvm-mirror/clang"
-  "dir": "clang"
 - "url": "https://cmake.org/cmake.git"
   "dir": "cmake"
 files:
 - "MacOSX10.7.sdk.tar.gz"
+- "llvm.tar.xz"
+- "cfe.tar.xz"
+- "libcxx.tar.xz"
+- "libcxxabi.tar.xz"
 - "openssl.tar.gz"
 - "cctools.tar.gz"
 - "versions"
@@ -44,8 +43,18 @@ script: |
   export PATH=$PATH:$INSTDIR/cmake/bin
 
   # Clang
-  cd ../llvm
-  mv ../clang tools/
+  cd ..
+  tar xaf llvm.tar.xz
+  tar xaf cfe.tar.xz
+  tar xaf libcxx.tar.xz
+  tar xaf libcxxabi.tar.xz
+  mv cfe-* clang
+  mv libcxx-* libcxx
+  mv libcxxabi-* libcxxabi
+  mv clang llvm-*/tools
+  mv libcxx llvm-*/projects
+  mv libcxxabi llvm-*/projects
+  cd llvm-*
   export LLVM_HOME=`pwd`
   mkdir build
   cd build
@@ -108,7 +117,7 @@ script: |
 
   # Grabbing the results
   cd $INSTDIR
-  ~/build/dzip.sh clang-$CLANG_VER-linux64-wheezy-utils.zip clang
+  ~/build/dzip.sh clang-$CLANG_VER-linux64-jessie-utils.zip clang
   ~/build/dzip.sh openssl-$OPENSSL_VER-mac64-utils.zip openssl
   ~/build/dzip.sh libevent-${LIBEVENT_TAG#release-}-mac64-utils.zip libevent
   cp *utils.zip $OUTDIR/

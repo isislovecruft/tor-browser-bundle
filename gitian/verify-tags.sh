@@ -110,8 +110,6 @@ EOF
 while read dir commit; do
   check_git_hash "$dir" "$commit"
 done << EOF
-llvm                    $LLVM_TAG
-clang                   $CLANG_TAG
 mingw-w64-git           $MINGW_TAG
 libdmg-hfsplus          $LIBDMG_TAG
 libfte                  $LIBFTE_TAG
@@ -130,7 +128,7 @@ uniuri                  $UNIURI_TAG
 EOF
 
 # Verify signatures on signed packages
-for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP
+for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI
 do
   PACKAGE="${i}_PACKAGE"
   URL="${i}_URL"

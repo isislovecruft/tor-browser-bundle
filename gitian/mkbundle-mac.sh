@@ -135,7 +135,7 @@ fi
 
 cd $GITIAN_DIR
 
-if [ ! -f inputs/clang-$CLANG_VER-linux64-wheezy-utils.zip -o \
+if [ ! -f inputs/clang-$CLANG_VER-linux64-jessie-utils.zip -o \
      ! -f inputs/openssl-$OPENSSL_VER-mac64-utils.zip -o \
      ! -f inputs/libevent-${LIBEVENT_TAG_ORIG#release-}-mac64-utils.zip ];
 then
@@ -151,7 +151,7 @@ then
 
   cd inputs
   cp -a ../build/out/*-utils.zip .
-  ln -sf clang-$CLANG_VER-linux64-wheezy-utils.zip clang-linux64-wheezy-utils.zip
+  ln -sf clang-$CLANG_VER-linux64-jessie-utils.zip clang-linux64-jessie-utils.zip
   ln -sf openssl-$OPENSSL_VER-mac64-utils.zip openssl-mac64-utils.zip
   ln -sf libevent-${LIBEVENT_TAG_ORIG#release-}-mac64-utils.zip libevent-mac64-utils.zip
   cd ..
@@ -164,7 +164,7 @@ else
   # We might have built the utilities in the past but maybe the links are
   # pointing to the wrong version. Refresh them.
   cd inputs
-  ln -sf clang-$CLANG_VER-linux64-wheezy-utils.zip clang-linux64-wheezy-utils.zip
+  ln -sf clang-$CLANG_VER-linux64-jessie-utils.zip clang-linux64-jessie-utils.zip
   ln -sf openssl-$OPENSSL_VER-mac64-utils.zip openssl-mac64-utils.zip
   ln -sf libevent-${LIBEVENT_TAG_ORIG#release-}-mac64-utils.zip libevent-mac64-utils.zip
   cd ..

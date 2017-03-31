@@ -2,7 +2,7 @@
 name: "tor-mac"
 distro: "debian"
 suites:
-- "wheezy"
+- "jessie"
 architectures:
 - "amd64"
 packages:
@@ -15,7 +15,7 @@ remotes:
 - "url": "https://git.torproject.org/tor.git"
   "dir": "tor"
 files:
-- "clang-linux64-wheezy-utils.zip"
+- "clang-linux64-jessie-utils.zip"
 - "cctools.tar.gz"
 - "MacOSX10.7.sdk.tar.gz"
 - "versions"
@@ -46,7 +46,7 @@ script: |
   # Extracting and copying all the necessary utilities and libraries.
   tar xaf MacOSX10.7.sdk.tar.gz
   tar xaf cctools.tar.gz
-  unzip clang-linux64-wheezy-utils.zip
+  unzip clang-linux64-jessie-utils.zip
   unzip -d $INSTDIR openssl-mac64-utils.zip
   unzip -d $INSTDIR libevent-mac64-utils.zip
   cp $INSTDIR/libevent/lib/libevent-*.dylib $TORBINDIR/
@@ -70,7 +70,7 @@ script: |
   ./autogen.sh
   find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
   ./configure --enable-static-openssl --disable-asciidoc --host=x86_64-apple-darwin10 --with-libevent-dir=$INSTDIR/libevent --with-openssl-dir=$INSTDIR/openssl --prefix=$INSTDIR
-  export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
+  export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1
   make $MAKEOPTS
   make install
   cd $INSTDIR

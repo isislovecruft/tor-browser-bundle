@@ -2,7 +2,7 @@
 name: "pluggable-transports-mac"
 distro: "debian"
 suites:
-- "wheezy"
+- "jessie"
 architectures:
 - "amd64"
 packages:
@@ -28,7 +28,7 @@ files:
 - "versions"
 - "go14.tar.gz"
 - "go.tar.gz"
-- "clang-linux64-wheezy-utils.zip"
+- "clang-linux64-jessie-utils.zip"
 - "cctools.tar.gz"
 - "MacOSX10.7.sdk.tar.gz"
 - "dzip.sh"
@@ -54,7 +54,7 @@ script: |
   mkdir -p $OUTDIR/
   #
   tar xaf cctools.tar.gz
-  unzip clang-linux64-wheezy-utils.zip
+  unzip clang-linux64-jessie-utils.zip
   # The 10.7 SDK is needed for Go: https://bugs.torproject.org/20023#comment:6
   tar xaf MacOSX10.7.sdk.tar.gz
   # Preparing clang for cross-compilation, setting the proper flags and

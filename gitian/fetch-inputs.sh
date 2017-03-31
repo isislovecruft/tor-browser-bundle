@@ -113,7 +113,7 @@ update_git() {
 
 ##############################################################################
 # Get+verify sigs that exist
-for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP
+for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI
 do
   PACKAGE="${i}_PACKAGE"
   URL="${i}_URL"
@@ -233,6 +233,10 @@ ln -sf "$NOSCRIPT_PACKAGE" noscript@noscript.net.xpi
 ln -sf "$OPENSSL_PACKAGE" openssl.tar.gz
 ln -sf "$BINUTILS_PACKAGE" binutils.tar.bz2
 ln -sf "$GCC_PACKAGE" gcc.tar.bz2
+ln -sf "$LLVM_PACKAGE" llvm.tar.xz
+ln -sf "$CFE_PACKAGE" cfe.tar.xz
+ln -sf "$LIBCXX_PACKAGE" libcxx.tar.xz
+ln -sf "$LIBCXXABI_PACKAGE" libcxxabi.tar.xz
 ln -sf "$PYTHON_MSI_PACKAGE" python.msi
 ln -sf "$PYCRYPTO_PACKAGE" pycrypto.tar.gz
 ln -sf "$ARGPARSE_PACKAGE" argparse.tar.gz
@@ -275,8 +279,6 @@ torbutton             https://git.torproject.org/torbutton.git            $TORBU
 tor-launcher          https://git.torproject.org/tor-launcher.git         $TORLAUNCHER_TAG
 tor-browser           https://git.torproject.org/tor-browser.git          $TORBROWSER_TAG
 cmake                 https://cmake.org/cmake.git                         $CMAKE_TAG
-llvm                  https://github.com/llvm-mirror/llvm                 $LLVM_TAG
-clang                 https://github.com/llvm-mirror/clang                $CLANG_TAG
 mingw-w64-git         http://git.code.sf.net/p/mingw-w64/mingw-w64        $MINGW_TAG
 pyptlib               https://git.torproject.org/pluggable-transports/pyptlib.git $PYPTLIB_TAG
 obfsproxy https://git.torproject.org/pluggable-transports/obfsproxy.git $OBFSPROXY_TAG
