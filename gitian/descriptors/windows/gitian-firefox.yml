@@ -77,6 +77,8 @@ script: |
   #git archive HEAD | tar -x -C $OUTDIR/src
   rm -rf .git
   find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
+  # Make sure widl is not inserting random timestamps, see #21837.
+  export WIDL_TIME_OVERRIDE="0"
   rm -f configure
   rm -f js/src/configure
   make -f client.mk configure CONFIGURE_ARGS="--with-tor-browser-version=${TORBROWSER_VERSION} --with-distribution-id=org.torproject --enable-update-channel=${TORBROWSER_UPDATE_CHANNEL} --enable-bundled-fonts"
