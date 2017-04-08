@@ -113,7 +113,7 @@ update_git() {
 
 ##############################################################################
 # Get+verify sigs that exist
-for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI ELFUTILS
+for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI
 do
   PACKAGE="${i}_PACKAGE"
   URL="${i}_URL"
@@ -252,7 +252,6 @@ ln -sf "$GO_PACKAGE" go.tar.gz
 ln -sf "$NSIS_PACKAGE" nsis.tar.bz2
 ln -sf "$NSIS_DEBIAN_PACKAGE" nsis-debian.tar.xz
 ln -sf "$YASM_PACKAGE" yasm.tar.gz
-ln -sf "$ELFUTILS_PACKAGE" elfutils.tar.bz2
 
 # Fetch latest gitian-builder itself
 # XXX - this is broken if a non-standard inputs dir is selected using the command line flag.
@@ -304,7 +303,6 @@ depot_tools           https://chromium.googlesource.com/chromium/tools/depot_too
 go-webrtc             https://github.com/keroserene/go-webrtc $GO_WEBRTC_TAG
 snowflake             https://git.torproject.org/pluggable-transports/snowflake.git $SNOWFLAKE_TAG
 uniuri                https://github.com/dchest/uniuri $UNIURI_TAG
-selfrando             https://github.com/immunant/selfrando.git $SELFRANDO_TAG
 EOF
 
 # HTTPS-Everywhere is special, too. We need to initialize the git submodules and

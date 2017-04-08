@@ -35,7 +35,7 @@ fi
 
 if [ -z "$VM_MEMORY" ];
 then
-  export VM_MEMORY=6000
+  export VM_MEMORY=4000
 fi
 
 ./make-vms.sh
@@ -99,7 +99,7 @@ then
 fi
 
 cd $GITIAN_DIR
-# XXX: 64bits selfrando only for now :(, see #20683.
+
 if [ ! -f inputs/binutils-$BINUTILS_VER-linux32-utils.zip -o \
      ! -f inputs/binutils-$BINUTILS_VER-linux64-utils.zip -o \
      ! -f inputs/gcc-$GCC_VER-linux32-utils.zip -o \
@@ -111,14 +111,13 @@ if [ ! -f inputs/binutils-$BINUTILS_VER-linux32-utils.zip -o \
      ! -f inputs/gmp-$GMP_VER-linux32-utils.zip -o \
      ! -f inputs/gmp-$GMP_VER-linux64-utils.zip -o \
      ! -f inputs/go-$GO_VER-linux32-utils.zip -o \
-     ! -f inputs/go-$GO_VER-linux64-utils.zip -o \
-     ! -f inputs/selfrando-$SELFRANDO_TAG-linux64-utils.zip ];
+     ! -f inputs/go-$GO_VER-linux64-utils.zip ];
 then
   echo
   echo "****** Starting Utilities Component of Linux Bundle (1/7 for Linux) ******"
   echo
 
-  ./bin/gbuild -j $NUM_PROCS -m $VM_MEMORY --commit libevent=$LIBEVENT_TAG,selfrando=$SELFRANDO_TAG $DESCRIPTOR_DIR/linux/gitian-utils.yml
+  ./bin/gbuild -j $NUM_PROCS -m $VM_MEMORY --commit libevent=$LIBEVENT_TAG $DESCRIPTOR_DIR/linux/gitian-utils.yml
   if [ $? -ne 0 ];
   then
     #mv var/build.log ./utils-fail-linux.log.`date +%Y%m%d%H%M%S`
@@ -139,7 +138,6 @@ then
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
   #cp -a result/utils-linux-res.yml inputs/
 else
@@ -161,7 +159,6 @@ else
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
 fi
 
@@ -196,7 +193,7 @@ then
   echo "****** Starting TorBrowser Component of Linux Bundle (3/7 for Linux) ******"
   echo
 
-  ./bin/gbuild -j $NUM_PROCS -m $VM_MEMORY --commit tor-browser=$TORBROWSER_TAG,faketime=$FAKETIME_TAG,selfrando=$SELFRANDO_TAG $DESCRIPTOR_DIR/linux/gitian-firefox.yml
+  ./bin/gbuild -j $NUM_PROCS -m $VM_MEMORY --commit tor-browser=$TORBROWSER_TAG,faketime=$FAKETIME_TAG $DESCRIPTOR_DIR/linux/gitian-firefox.yml
   if [ $? -ne 0 ];
   then
     #mv var/build.log ./firefox-fail-linux.log.`date +%Y%m%d%H%M%S`
