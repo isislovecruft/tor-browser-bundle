@@ -61,6 +61,7 @@ Tor Browser 7.0a3 -- April 20 2017
  * Linux
    * Bug 21907: Fix runtime error on CentOS 6
    * Bug 21748: Fix broken Snowflake build and update bridge details
+   * Bug 21954: Snowflake breaks the 7.0a3 build
  * Build system
    * Windows
      * Bug 21837: Fix reproducibility of accessibility code for Windows
