@@ -106,13 +106,3 @@ do
   echo "Precise amd64 VM build failed... Trying again"
   echo
 done
-
-while ! build_and_test_vm precise amd64 64
-do
-  stop-target 64 precise
-  rm ./base-precise-amd64*
-  echo
-  echo "Precise amd64 VM build failed... Trying again"
-  echo
-done
-
