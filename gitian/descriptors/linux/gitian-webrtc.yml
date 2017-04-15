@@ -121,7 +121,8 @@ script: |
   "$GN" gen out/Release --args="$GN_ARGS"
   ninja -C out/Release webrtc field_trial metrics_default pc_test_utils
   # https://github.com/keroserene/go-webrtc/issues/23#issuecomment-175312648
-  ar crs libwebrtc-magic.a $(find . -name '*.o' -not -name '*.main.o' | sort)
+  # libwebrtc-linux-386-magic.a(dump_syms_regtest.o): unsupported ELF file type 2
+  ar crs libwebrtc-magic.a $(find . -name '*.o' -not -name '*.main.o' -not -name 'dump_syms_regtest.o' | sort)
   cd ../..
 
   # Grabbing the result
