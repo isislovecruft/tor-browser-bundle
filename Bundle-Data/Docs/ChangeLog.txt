@@ -45,7 +45,7 @@ Tor Browser 7.0a3 -- April 20 2017
    * Bug 19955: Avoid confusing warning that favicon load request got cancelled
    * Bug 20005: Backport fixes for memory leaks investigation
    * Bug 20755: ltn.com.tw is broken in Tor Browser
-   * Bug 21896: Commenting on website is broken due to CAPTCHA not being disaplyed
+   * Bug 21896: Commenting on website is broken due to CAPTCHA not being displayed
    * Bug 20680: Rebase Tor Browser patches to 52 ESR
    * Bug 21917: Add new obfs4 bridges
    * Bug 21918: Move meek-amazon to d2cly7j4zqgua7.cloudfront.net backend
