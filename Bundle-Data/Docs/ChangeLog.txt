@@ -58,10 +58,12 @@ Tor Browser 7.0a3 -- April 20 2017
    * Bug 21723: Fix inconsistent generation of MOZ_MACBUNDLE_ID
    * Bug 21724: Make Firefox and Tor Browser distinct macOS apps
    * Bug 21931: Backport OSX SetupMacCommandLine updater fixes
+   * Bug 15910: Don't download GMPs via the local fallback
  * Linux
    * Bug 21907: Fix runtime error on CentOS 6
    * Bug 21748: Fix broken Snowflake build and update bridge details
    * Bug 21954: Snowflake breaks the 7.0a3 build
+   * Bug 15910: Don't download GMPs via the local fallback
  * Build system
    * Windows
      * Bug 21837: Fix reproducibility of accessibility code for Windows
@@ -78,6 +80,7 @@ Tor Browser 7.0a3 -- April 20 2017
    * Linux
      * Bug 21930: NSS libraries are missing from mar-tools archive
      * Bug 21239: Adapt Linux Firefox descriptor to ESR52 (use GTK2)
+     * Bug 21960: Linux bundles based on ESR 52 are not reproducible anymore
      * Bug 21629: Fix broken ASan builds when switching to ESR 52
 
 Tor Browser 7.0a2-hardened -- March 7 2017
