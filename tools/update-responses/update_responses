@@ -292,6 +292,7 @@ sub get_response {
         goto CLOSETAGS;
     }
     my $minversion = get_config($config, $version, $os, 'minSupportedOSVersion');
+    my $mininstruc = get_config($config, $version, $os, 'minSupportedInstructionSet');
     $writer->startTag('update',
         type => 'minor',
         displayVersion => $version,
@@ -302,6 +303,7 @@ sub get_response {
         actions => 'showURL',
         openURL => get_config($config, $version, $os, 'detailsURL'),
         defined $minversion ? ( minSupportedOSVersion => $minversion ) : (),
+        defined $mininstruc ? ( minSupportedInstructionSet => $mininstruc ) : (),
     );
     foreach my $patch (@patches) {
         my @sorted_patch = map { $_ => $patch->{$_} } sort keys %$patch;
