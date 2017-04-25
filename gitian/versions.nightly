@@ -54,6 +54,7 @@ WEBRTC_TAG=c279861207c5b15fc51069e96595782350e0ac12 # https://chromium.googlesou
 GO_WEBRTC_TAG=master
 SNOWFLAKE_TAG=master
 UNIURI_TAG=master
+SELFRANDO_TAG=aa4130fe9d782ff7ef581555ef3470663b110bdb
 
 GITIAN_TAG=tor-browser-builder-4
 
@@ -78,6 +79,7 @@ GO14_VER=1.4.3
 GO_VER=1.8.1
 NSIS_VER=2.51
 YASM_VER=1.2.0
+ELFUTILS_VER=0.166
 
 ## File names for the source packages
 OPENSSL_PACKAGE=openssl-${OPENSSL_VER}.tar.gz
@@ -112,6 +114,7 @@ NOTOKRFONT_PACKAGE=NotoSansKR-Regular.otf
 NOTOSCFONT_PACKAGE=NotoSansSC-Regular.otf
 NOTOTCFONT_PACKAGE=NotoSansTC-Regular.otf
 YASM_PACKAGE=yasm-${YASM_VER}.tar.gz
+ELFUTILS_PACKAGE=elfutils-${ELFUTILS_VER}.tar.bz2
 
 # Hashes for packages with weak sigs or no sigs
 OPENSSL_HASH=6b3977c61f2aedf0f96367dcfb5c6e578cf37e7b8d913b4ecb6643c3cb88d8c0
@@ -174,3 +177,4 @@ NOTOKRFONT_URL=${NOTOCJKBASE_URL}/${NOTOKRFONT_PACKAGE}
 NOTOSCFONT_URL=${NOTOCJKBASE_URL}/${NOTOSCFONT_PACKAGE}
 NOTOTCFONT_URL=${NOTOCJKBASE_URL}/${NOTOTCFONT_PACKAGE}
 YASM_URL=https://www.tortall.net/projects/yasm/releases/${YASM_PACKAGE}
+ELFUTILS_URL=https://sourceware.org/elfutils/ftp/${ELFUTILS_VER}/${ELFUTILS_PACKAGE}

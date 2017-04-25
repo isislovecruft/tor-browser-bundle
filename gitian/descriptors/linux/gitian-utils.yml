@@ -24,10 +24,14 @@ packages:
 - "libssl-dev"
 # Needed for binutils (64bit) as we are building with PIE enabled.
 - "libstdc++6-4.7-pic"
+# Needed for Selfrando
+- "scons"
 reference_datetime: "2000-01-01 00:00:00"
 remotes:
 - "url": "https://github.com/libevent/libevent.git"
   "dir": "libevent"
+- "url": "https://github.com/immunant/selfrando.git"
+  "dir": "selfrando"
 files:
 - "binutils.tar.bz2"
 - "gcc.tar.bz2"
@@ -37,6 +41,8 @@ files:
 - "go.tar.gz"
 - "versions"
 - "dzip.sh"
+- "elfutils.tar.bz2"
+- "binutils-224-gold.patch"
 script: |
   INSTDIR="$HOME/install"
   source versions
@@ -52,6 +58,12 @@ script: |
   export DEB_BUILD_HARDENING_FORMAT=1
   export DEB_BUILD_HARDENING_PIE=1
 
+  ARCH=""
+  if [ $GBUILD_BITS == "64" ];
+  then
+    ARCH="64"
+  fi
+
   # Building Binutils
   tar xjf binutils.tar.bz2
   # The libstdc++ shipped by default is non-PIC which breaks the binutils build
@@ -63,6 +75,13 @@ script: |
     export LDFLAGS="-L/home/debian -lstdc++"
   fi
   cd binutils*
+  # We need to work around a gold linker bug in 2.24 to get selfrando working,
+  # see bug 20683.
+  # XXX: 64bits only for now :(, see #20683.
+  if [ $GBUILD_BITS == "64" ];
+  then
+    patch -p1 < ../binutils-224-gold.patch
+  fi
   # We want to use gold as the linker in our toolchain mainly as it is way
   # faster when linking Tor Browser code (especially libxul). But apart from
   # that it fixes #12103 and issues with ESR 31 and our Gitian setup as well
@@ -86,6 +105,28 @@ script: |
   cd ..
 
   export DEB_BUILD_HARDENING_FORMAT=1
+  export PATH="$INSTDIR/binutils/bin:$INSTDIR/gcc/bin:$PATH"
+  export LD_LIBRARY_PATH="$INSTDIR/gcc/lib$ARCH"
+
+  # XXX: 64bits only for now :(, see #20683.
+  if [ $GBUILD_BITS == "64" ];
+  then
+    # Building Elfutils
+    tar xjf elfutils.tar.bz2
+    cd elfutils*/
+    ./configure --prefix=$INSTDIR/elfutils
+    make $MAKEOPTS
+    make install
+    cd ..
+
+    # Building Selfrando
+    cd selfrando
+    scons -Q arch=x86_64 LIBELF_PATH="$INSTDIR/elfutils" FORCE_INPLACE=1 DEBUG_LEVEL=env WRITE_LAYOUTS=env LOG=console
+    mkdir -p $INSTDIR/selfrando
+    cp out/x86_64/bin/* $INSTDIR/selfrando/
+    cd ..
+  fi
+
   # Building Libevent
   cd libevent
   ./autogen.sh
@@ -157,4 +198,9 @@ script: |
   ~/build/dzip.sh libevent-${LIBEVENT_TAG#release-}-linux$GBUILD_BITS-utils.zip libevent
   ~/build/dzip.sh gmp-$GMP_VER-linux$GBUILD_BITS-utils.zip gmp
   ~/build/dzip.sh go-$GO_VER-linux$GBUILD_BITS-utils.zip go
+  # XXX: 64bits only for now :(, see #20683.
+  if [ $GBUILD_BITS == "64" ];
+  then
+    ~/build/dzip.sh selfrando-$SELFRANDO_TAG-linux$GBUILD_BITS-utils.zip selfrando
+  fi
   cp *utils.zip $OUTDIR/

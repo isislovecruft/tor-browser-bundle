@@ -125,10 +125,11 @@ depot_tools             $DEPOT_TOOLS_TAG
 go-webrtc               $GO_WEBRTC_TAG
 snowflake               $SNOWFLAKE_TAG
 uniuri                  $UNIURI_TAG
+selfrando               $SELFRANDO_TAG
 EOF
 
 # Verify signatures on signed packages
-for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI
+for i in OPENSSL BINUTILS GCC PYTHON_MSI GMP LLVM CFE LIBCXX LIBCXXABI ELFUTILS
 do
   PACKAGE="${i}_PACKAGE"
   URL="${i}_URL"
