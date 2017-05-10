@@ -72,7 +72,7 @@ GO14_VER=1.4.3
 GO_VER=1.8.1
 NSIS_VER=2.51
 YASM_VER=1.2.0
-ELFUTILS_VER=0.160
+ELFUTILS_VER=0.166
 
 ## File names for the source packages
 OPENSSL_PACKAGE=openssl-${OPENSSL_VER}.tar.gz
