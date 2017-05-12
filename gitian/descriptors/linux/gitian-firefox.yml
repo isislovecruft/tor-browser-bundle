@@ -79,8 +79,10 @@ script: |
   cp /usr/bin/hardened-cc ./
   mv gcc gcc.real
   mv c++ c++.real
+  mv g++ g++.real
   ln -sf hardened-cc gcc
   ln -sf hardened-cc c++
+  ln -sf hardened-cc g++
   cd ~/build
   export PATH=$INSTDIR/gcc/bin:$INSTDIR/binutils/bin:$PATH
   ARCH=""
