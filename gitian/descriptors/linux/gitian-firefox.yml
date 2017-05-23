@@ -94,7 +94,6 @@ script: |
   export LD_LIBRARY_PATH=$INSTDIR/gcc/lib$ARCH
   #
   mkdir -p $INSTDIR/Browser/
-  mkdir -p $INSTDIR/Debug/Browser/gmp-clearkey/0.1
 
   cd tor-browser
   # run get-moz-build-date before removing .git, which is used to get the year
@@ -150,7 +149,7 @@ script: |
   # Strip and generate debuginfo for the firefox binary that we keep, all *.so
   # files, the plugin-container, and the updater (see ticket #10126)
   cd $INSTDIR
-  for LIB in Browser/*.so Browser/firefox Browser/plugin-container Browser/gmp-clearkey/0.1/*.so Browser/updater
+  for LIB in Browser/*.so Browser/firefox Browser/plugin-container Browser/updater
   do
     objcopy --only-keep-debug $LIB Debug/$LIB
     strip $LIB
