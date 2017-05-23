@@ -94,6 +94,7 @@ script: |
   export LD_LIBRARY_PATH=$INSTDIR/gcc/lib$ARCH
   #
   mkdir -p $INSTDIR/Browser/
+  mkdir -p $INSTDIR/Debug/Browser/
 
   cd tor-browser
   # run get-moz-build-date before removing .git, which is used to get the year
