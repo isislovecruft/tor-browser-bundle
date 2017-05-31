@@ -104,6 +104,27 @@ script: |
   make install
   cd ..
 
+  # Make sure we use the hardening wrapper
+  pushd $INSTDIR/gcc/bin
+  cp /usr/bin/hardened-cc ./
+  mv gcc gcc.real
+  mv c++ c++.real
+  mv g++ g++.real
+  ln -sf hardened-cc gcc
+  ln -sf hardened-cc c++
+  ln -sf hardened-cc g++
+  popd
+
+  # Make sure gold is used with the hardening wrapper for full RELRO, see
+  # #13031.
+  pushd $INSTDIR/binutils/bin
+  rm ld
+  cp /usr/bin/hardened-ld ./
+  mv ld.gold ld.gold.real
+  ln -sf hardened-ld ld.gold
+  ln -sf ld.gold ld
+  popd
+
   export DEB_BUILD_HARDENING_FORMAT=1
   export PATH="$INSTDIR/binutils/bin:$INSTDIR/gcc/bin:$PATH"
   export LD_LIBRARY_PATH="$INSTDIR/gcc/lib$ARCH"
@@ -191,9 +212,11 @@ script: |
   # libevent archives are no longer reproducible. The main reason
   # is that they include some .a archives which include timestamps.
   # Those files are however not part of the files we ship.
+  # We use the --symlinks zip option for binutils and gcc for the
+  # hardening wrappers symlinks
   cd $INSTDIR
-  ~/build/dzip.sh binutils-$BINUTILS_VER-linux$GBUILD_BITS-utils.zip binutils
-  ~/build/dzip.sh gcc-$GCC_VER-linux$GBUILD_BITS-utils.zip gcc
+  ZIPOPTS='--symlinks' ~/build/dzip.sh binutils-$BINUTILS_VER-linux$GBUILD_BITS-utils.zip binutils
+  ZIPOPTS='--symlinks' ~/build/dzip.sh gcc-$GCC_VER-linux$GBUILD_BITS-utils.zip gcc
   ~/build/dzip.sh openssl-$OPENSSL_VER-linux$GBUILD_BITS-utils.zip openssl
   ~/build/dzip.sh libevent-${LIBEVENT_TAG#release-}-linux$GBUILD_BITS-utils.zip libevent
   ~/build/dzip.sh gmp-$GMP_VER-linux$GBUILD_BITS-utils.zip gmp
