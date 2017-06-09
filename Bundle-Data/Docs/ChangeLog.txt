@@ -133,7 +133,7 @@ Tor Browser 7.0a3 -- April 20 2017
    * Bug 17334: Hide Referer when leaving a .onion domain (improved patch)
    * Bug 3246: Double-key cookies
    * Bug 8842: Fix XML parsing error
-   * Bug 16886: 16886: "Add-on compatibility check dialog" contains Firefox logo
+   * Bug 16886: "Add-on compatibility check dialog" contains Firefox logo
    * Bug 19192: Untrust Blue Coat CA
    * Bug 19955: Avoid confusing warning that favicon load request got cancelled
    * Bug 20005: Backport fixes for memory leaks investigation
