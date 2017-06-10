@@ -45,6 +45,6 @@ versions:
         win32:
             minSupportedInstructionSet: SSE2
         osx32:
-            minSupportedOSVersion: 10.9
+            minSupportedOSVersion: 13.0.0
         osx64:
-            minSupportedOSVersion: 10.9
+            minSupportedOSVersion: 13.0.0
