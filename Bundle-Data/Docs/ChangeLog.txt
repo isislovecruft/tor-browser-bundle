@@ -41,6 +41,10 @@ Tor Browser 7.5a1 -- June 14 2017
    * Bug 22468: Add default obfs4 bridges frosty and dragon
  * Windows
    * Bug 22419: Prevent access to file://
+   * Bug 21617: Fix single RWX page on Windows
+ * OS X
+   * Bug 22558: Don't update OS X 10.7.x and 10.8.x users to Tor Browser 7.0
+
  * Linux
    * Bug 16285: Remove ClearKey related library stripping
    * Bug 21852: Don't use jemalloc4 anymore
