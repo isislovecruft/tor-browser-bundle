@@ -6,7 +6,9 @@ suites:
 architectures:
 - "amd64"
 packages:
+- "faketime"
 - "unzip"
+- "pkg-config"
 - "zip"
 reference_datetime: "2000-01-01 00:00:00"
 remotes:
@@ -24,6 +26,12 @@ remotes:
   "dir": "goxnet"
 - "url": "https://git.torproject.org/pluggable-transports/obfs4.git"
   "dir": "obfs4"
+- "url": "https://github.com/keroserene/go-webrtc.git"
+  "dir": "go-webrtc"
+- "url": "https://git.torproject.org/pluggable-transports/snowflake.git"
+  "dir": "snowflake"
+- "url": "https://github.com/dchest/uniuri.git"
+  "dir": "uniuri"
 files:
 - "versions"
 - "go14.tar.gz"
@@ -31,6 +39,7 @@ files:
 - "clang-linux64-jessie-utils.zip"
 - "cctools.tar.gz"
 - "MacOSX10.7.sdk.tar.gz"
+- "webrtc-mac64-gbuilt.zip"
 - "dzip.sh"
 script: |
   INSTDIR="$HOME/install"
@@ -59,6 +68,8 @@ script: |
   tar xaf MacOSX10.7.sdk.tar.gz
   # Preparing clang for cross-compilation, setting the proper flags and
   # variables
+  # "go link" expects to find a program called "dsymutil" exactly.
+  ln -sf x86_64-apple-darwin10-dsymutil $HOME/build/cctools/bin/dsymutil
   # ld needs libLTO.so from llvm
   export LD_LIBRARY_PATH="$HOME/build/clang/lib"
   export PATH="$HOME/build/cctools/bin:$PATH"
@@ -93,7 +104,12 @@ script: |
   export GOARCH=amd64
   tar xvf go.tar.gz
   cd go/src
-  CGO_ENABLED=1 CC_FOR_TARGET="$CC_FOR_TARGET" CC= CFLAGS= LDFLAGS= ./make.bash
+  # faketime is needed because clang 3.8.0 on Darwin embeds the timestamps of
+  # certain intermediate object files (including those that arise here while
+  # compiling the Go runtime itself). Without this, variable timestamps would
+  # end up in snowflake-client.
+  # https://github.com/golang/go/issues/9206#issuecomment-310476743
+  CGO_ENABLED=1 CC_FOR_TARGET="$CC_FOR_TARGET" CC= CFLAGS= LDFLAGS= faketime -f "$REFERENCE_DATETIME" ./make.bash
   cd ../..
   export PATH="$PATH:$PWD/go/bin"
 
@@ -138,6 +154,14 @@ script: |
   go install github.com/dchest/siphash
   cd ..
 
+  # Building go uniuri
+  cd uniuri
+  find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
+  mkdir -p "$GOPATH/src/github.com/dchest/"
+  ln -sf "$PWD" "$GOPATH/src/github.com/dchest/uniuri"
+  go install github.com/dchest/uniuri
+  cd ..
+
   # Building golang.org/x/crypto (obfs4proxy > 0.0.3 || Go >= 1.4)
   cd goxcrypto
   find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
@@ -165,6 +189,51 @@ script: |
   go build -ldflags '-s'
   cp -a obfs4proxy $PTDIR
   cd ../..
+
+  unzip webrtc-mac64-gbuilt.zip
+  export SDKROOT="$PWD/MacOSX10.7.sdk"
+
+  # Building go-webrtc
+  cd go-webrtc
+  # Replace the prebuilt webrtc library with our own one.
+  rm -rf include/ lib/
+  ln -sf ../webrtc/{include,lib} .
+  find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
+  mkdir -p "$GOPATH/src/github.com/keroserene/"
+  ln -sf "$PWD" "$GOPATH/src/github.com/keroserene/go-webrtc"
+  CFLAGS="$FLAGS -mmacosx-version-min=10.7"
+  CXXFLAGS="$FLAGS -stdlib=libc++ -mmacosx-version-min=10.7"
+  LDFLAGS="$FLAGS -stdlib=libc++ -mmacosx-version-min=10.7"
+  GOARCH=amd64 CGO_ENABLED=1 CGO_CFLAGS="$CFLAGS" CGO_CXXFLAGS="$CXXFLAGS" CGO_LDFLAGS="$LDFLAGS" CC="$HOME/build/clang/bin/clang" CXX="$HOME/build/clang/bin/clang++" go install github.com/keroserene/go-webrtc
+  cd ..
+
+  # Building snowflake
+  cd snowflake
+  find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
+  cd client
+  # See the faketime comment above. Without faketime, snowflake-client would
+  # contain the timestamp of the temporary client.a file created during
+  # "go build".
+  GOARCH=amd64 CGO_ENABLED=1 CGO_CFLAGS="$CFLAGS" CGO_CXXFLAGS="$CXXFLAGS" CGO_LDFLAGS="$LDFLAGS" CC="$HOME/build/clang/bin/clang" CXX="$HOME/build/clang/bin/clang++" faketime -f "$REFERENCE_DATETIME" go build -ldflags '-s'
+  # Hack: Overwrite variable absolute paths embedded in the binary. clang 3.8.0
+  # on Darwin embeds such paths and the issue is unsolved in upstream Go as of
+  # 2016-06-28:
+  # https://github.com/golang/go/issues/9206#issuecomment-310476743
+  # The two kinds of paths are ("000000000" stands for 9 random digits):
+  #   /tmp/go-build000000000
+  #   /tmp/go-link-000000000
+  # Such paths are the output of ioutil.TempDir("", "go-build") and
+  # ioutil.TempDir("", "go-link-").
+  cp -a client client.stomped
+  sed -i -E -e 's#(/tmp/go-build|/tmp/go-link-)[0-9]{9}/#\1XXXXXXXXX/#g' client.stomped
+  # Sanity check: make sure the file actually changed. If it did not, it could
+  # mean that a change in go or clang has made this step unnecessary.
+  cmp client client.stomped && (echo "No paths replaced in snowflake-client. Maybe the replacement failed or is no longer needed. Check descriptors/mac/gitian-pluggable-transports.yml"; exit 1)
+  cp -a client.stomped $PTDIR/snowflake-client
+  cd ..
+  mkdir -p $INSTDIR/Docs/snowflake
+  cp -a README.md LICENSE $INSTDIR/Docs/snowflake
+  cd ..
 
   # Grabbing the result
   cd $INSTDIR
