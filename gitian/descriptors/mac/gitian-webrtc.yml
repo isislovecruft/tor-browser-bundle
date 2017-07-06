@@ -1,0 +1,139 @@
+---
+name: "webrtc-mac"
+distro: "debian"
+suites:
+- "jessie"
+architectures:
+- "amd64"
+packages:
+- "unzip"
+- "zip"
+- "libglib2.0-dev"
+- "libgtk2.0-dev"
+- "pkg-config"
+- "python-biplist"
+reference_datetime: "2000-01-01 00:00:00"
+remotes:
+- "url": "https://chromium.googlesource.com/chromium/tools/depot_tools.git"
+  "dir": "depot_tools"
+files:
+- "versions"
+- "clang-linux64-jessie-utils.zip"
+- "cctools.tar.gz"
+- "MacOSX10.7.sdk.tar.gz"
+- "dzip.sh"
+- "webrtc.tar.gz"
+- "webrtc-mac.patch"
+script: |
+  INSTDIR="$HOME/install"
+  source versions
+  export REFERENCE_DATETIME
+  export TZ=UTC
+  export LC_ALL=C
+  umask 0022
+  #
+  mkdir -p $OUTDIR/
+
+  # Setting up depot_tools
+  # https://dev.chromium.org/developers/how-tos/install-depot-tools
+  export PATH="$PATH:$PWD/depot_tools"
+  # Disable automatic updating.
+  export DEPOT_TOOLS_UPDATE=0
+
+  # Extracting all the necessary tools
+  tar xaf cctools.tar.gz
+  unzip clang-linux64-jessie-utils.zip
+  tar xaf MacOSX10.7.sdk.tar.gz
+  export SDKROOT="$PWD/MacOSX10.7.sdk"
+  # src/build/toolchain/mac/filter_libtool.py wants libtool to be called exactly "libtool".
+  ln -sf x86_64-apple-darwin10-libtool $HOME/build/cctools/bin/libtool
+  # ld needs libLTO.so from llvm
+  export LD_LIBRARY_PATH="$HOME/build/clang/lib"
+  export PATH="$HOME/build/cctools/bin:$PATH"
+  export AR=x86_64-apple-darwin10-ar
+  # Certain cross-compiling flags are set in webrtc-mac.patch because the build
+  # system doesn't honor CFLAGS etc. environment variables.
+
+  # Building webrtc
+  tar xaf webrtc.tar.gz
+  cd webrtc/src
+  patch -p1 < ../../webrtc-mac.patch
+
+  # The linux descriptor builds its own copy of gn, using tools/gn/bootstrap/bootstrap.py.
+  # I tried that here, but for some reason the gn so built doesn't work. On "gn gen",
+  # it crashes with this error:
+  #   [0624/022439.767916:FATAL:command_gen.cc(59)] Check failed: !rule.empty().
+  # Instead, use the gn packaged with depot_tools.
+  GN="$HOME/build/depot_tools/gn"
+
+  # Hardcode the output of some utility programs that otherwise require Xcode
+  # tools, like xcode-select, xcodebuild, sw_vers, and xcrun. This probably
+  # needs to be kept in sync with the SDK version.
+  cat <<EOF > build/mac/find_sdk.py
+  print("$SDKROOT")
+  print("10.7")
+  EOF
+  cat <<EOF > build/config/mac/sdk_info.py
+  print("machine_os_build=\"10.7\"")
+  print("sdk_build=\"10.7\"")
+  print("sdk_path=\"$SDKROOT\"")
+  print("sdk_platform_path=\"$SDKROOT\"")
+  print("sdk_version=\"10.7\"")
+  print("xcode_build=\"7.3\"")
+  print("xcode_version=\"0730\"")
+  EOF
+
+  export GN_ARGS=""
+  # For a list of all possible GN args, do "gn gen out/Release; gn args --list out/Release".
+  # https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/cross_compiles.md
+  GN_ARGS+=" target_os=\"mac\" target_cpu=\"x64\" mac_deployment_target=\"10.7\""
+  # Not debug.
+  GN_ARGS+=" is_debug=false"
+  # There are warnings from unused returns.
+  GN_ARGS+=" treat_warnings_as_errors=false"
+  # Build static libraries.
+  GN_ARGS+=" is_component_build=false"
+  # Do not use bundled utilities.
+  GN_ARGS+=" is_clang=false use_sysroot=false"
+  GN_ARGS+=" clang_use_chrome_plugins=false"
+  GN_ARGS+=" clang_base_path=\"$HOME/build/clang\""
+  GN_ARGS+=" gold_path=\"$INSTDIR/binutils/bin\""
+  # Avoid some dependencies.
+  GN_ARGS+=" rtc_include_opus=false rtc_include_ilbc=false rtc_include_internal_audio_device=false"
+  # Tests are needed for field_trial, metrics_default, and pc_test_utils targets
+  # (which include code needed by go-webrtc).
+  GN_ARGS+=" rtc_include_tests=true"
+  # Make sure not to use bundled clang and binutils.
+  rm -rf third_party/llvm-build
+  rm -rf third_party/binutils
+  rm -rf out/Release
+  "$GN" gen out/Release --args="$GN_ARGS"
+  ninja -C out/Release webrtc field_trial metrics_default pc_test_utils
+  # The cctools ar doesn't have the 'D' deterministic option of GNU ar, but the
+  # ZERO_AR_DATE environment variable similarly sets timestamps within the
+  # archive to zero.
+  # https://opensource.apple.com/source/cctools/cctools-886/ar/archive.c.auto.html
+  # https://codereview.chromium.org/699083004/
+  # .o files under out/Release/obj/ are the build outputs. Don't include .o
+  # files from elsewhere under out/ because they are build helpers and things
+  # like that, not necessarily of the target architecture, and anyway are not
+  # needed.
+  # https://bugs.torproject.org/22832
+  ZERO_AR_DATE=1 "$AR" crs libwebrtc-magic.a $(find out/Release/obj -name '*.o' | sort)
+  # ZERO_AR_DATE additionally sets the mtime of the .a file itself to zero
+  # (1970-01-01), so change it to match everything else.
+  touch --date="$REFERENCE_DATETIME" libwebrtc-magic.a
+  cd ../..
+
+  # Grabbing the result
+  cd $INSTDIR
+  mkdir -p webrtc/include webrtc/lib
+  cp -f $HOME/build/webrtc/src/libwebrtc-magic.a webrtc/lib/libwebrtc-darwin-amd64-magic.a
+  INCLUDE_DIR="$PWD/webrtc/include"
+  (cd $HOME/build/webrtc/src && for h in $(find talk/ webrtc/ -type f -name '*.h'); do
+    mkdir -p "$INCLUDE_DIR/$(dirname $h)"
+    cp -f "$h" "$INCLUDE_DIR/$h"
+  done)
+
+  ~/build/dzip.sh webrtc-mac64-gbuilt.zip webrtc
+  cp webrtc-mac64-gbuilt.zip $OUTDIR/
