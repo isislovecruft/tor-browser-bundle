@@ -56,9 +56,8 @@ $WRAPPER_DIR/build-helpers/dzip.sh $GITIAN_DIR/inputs/tbb-docs.zip ./Docs/
 rm -f $GITIAN_DIR/inputs/TorBrowser.app.meek-http-helper.zip
 (cd PTConfigs/mac && $WRAPPER_DIR/build-helpers/dzip.sh $GITIAN_DIR/inputs/TorBrowser.app.meek-http-helper.zip TorBrowser.app.meek-http-helper)
 cp PTConfigs/mac/torrc-defaults-appendix $GITIAN_DIR/inputs/torrc-defaults-appendix-mac
-# FTE is temporarily removed due to bug 18495 and snowflake is Linux-only for
-# now.
-  grep -Ev 'default_bridge\.fte|default_bridge\.snowflake' PTConfigs/bridge_prefs.js > $GITIAN_DIR/inputs/bridge_prefs.js
+# FTE is temporarily removed due to bug 18495.
+  grep -Ev 'default_bridge\.fte' PTConfigs/bridge_prefs.js > $GITIAN_DIR/inputs/bridge_prefs.js
 cp PTConfigs/meek-http-helper-user.js $GITIAN_DIR/inputs/
 cp mac-tor.sh $GITIAN_DIR/inputs/
 
