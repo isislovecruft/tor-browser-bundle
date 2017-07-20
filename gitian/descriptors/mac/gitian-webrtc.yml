@@ -97,7 +97,6 @@ script: |
   GN_ARGS+=" is_clang=false use_sysroot=false"
   GN_ARGS+=" clang_use_chrome_plugins=false"
   GN_ARGS+=" clang_base_path=\"$HOME/build/clang\""
-  GN_ARGS+=" gold_path=\"$INSTDIR/binutils/bin\""
   # Avoid some dependencies.
   GN_ARGS+=" rtc_include_opus=false rtc_include_ilbc=false rtc_include_internal_audio_device=false"
   # Tests are needed for field_trial, metrics_default, and pc_test_utils targets
