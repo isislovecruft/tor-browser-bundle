@@ -50,7 +50,7 @@ WEBRTC_TAG=c279861207c5b15fc51069e96595782350e0ac12 # https://chromium.googlesou
 GO_WEBRTC_TAG=master
 SNOWFLAKE_TAG=master
 UNIURI_TAG=master
-SELFRANDO_TAG=tb-v0.2
+SELFRANDO_TAG=tb-v0.3.2
 
 GITIAN_TAG=tor-browser-builder-4
 

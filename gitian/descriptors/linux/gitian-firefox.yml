@@ -34,12 +34,12 @@ files:
 - "binutils-linux64-utils.zip"
 - "gcc-linux32-utils.zip"
 - "gcc-linux64-utils.zip"
+- "selfrando-linux32-utils.zip"
+- "selfrando-linux64-utils.zip"
 - "get-moz-build-date"
 - "re-dzip.sh"
 - "dzip.sh"
 - "versions"
-# XXX: 64bits only for now :(, see #20683.
-- "selfrando-linux64-utils.zip"
 script: |
   source versions
   INSTDIR="$HOME/install"
@@ -57,11 +57,7 @@ script: |
   export DEB_BUILD_HARDENING_FORMAT=1
   export DEB_BUILD_HARDENING_PIE=1
   #
-  # XXX: 64bits only for now :(, see #20683.
-  if [ $GBUILD_BITS == "64" ];
-  then
-    unzip -d $INSTDIR selfrando-linux64-utils.zip
-  fi
+  unzip -d $INSTDIR selfrando-linux$GBUILD_BITS-utils.zip
   # Preparing Binutils and GCC for Tor Browser
   unzip -d $INSTDIR binutils-linux$GBUILD_BITS-utils.zip
   unzip -d $INSTDIR gcc-linux$GBUILD_BITS-utils.zip
@@ -86,14 +82,10 @@ script: |
   find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
   rm -f configure
   rm -f js/src/configure
-  # XXX: 64bits only for now :(, see #20683.
-  if [ $GBUILD_BITS == "64" ];
-  then
-    # Selfrando wrapper
-    export PATH="$HOME/build/selfrando/Tools/TorBrowser/tc-wrapper/:$PATH"
-    # We need to avoid the shuffling while building as this breaks compilation
-    export SELFRANDO_skip_shuffle=
-  fi
+  # Selfrando wrapper
+  export PATH="$HOME/build/selfrando/Tools/TorBrowser/tc-wrapper/:$PATH"
+  # We need to avoid the shuffling while building as this breaks compilation
+  export SELFRANDO_skip_shuffle=
   make -f client.mk configure CONFIGURE_ARGS="--with-tor-browser-version=${TORBROWSER_VERSION} --with-distribution-id=org.torproject --enable-update-channel=${TORBROWSER_UPDATE_CHANNEL} --enable-bundled-fonts"
   find -type f -print0 | xargs -0 touch --date="$REFERENCE_DATETIME"
   make $MAKEOPTS -f client.mk build

@@ -59,9 +59,11 @@ script: |
   export DEB_BUILD_HARDENING_PIE=1
 
   ARCH=""
+  SR_ARCH="x86"
   if [ $GBUILD_BITS == "64" ];
   then
     ARCH="64"
+    SR_ARCH="x86_64"
   fi
 
   # Building Binutils
@@ -77,11 +79,7 @@ script: |
   cd binutils*
   # We need to work around a gold linker bug in 2.24 to get selfrando working,
   # see bug 20683.
-  # XXX: 64bits only for now :(, see #20683.
-  if [ $GBUILD_BITS == "64" ];
-  then
-    patch -p1 < ../binutils-224-gold.patch
-  fi
+  patch -p1 < ../binutils-224-gold.patch
   # We want to use gold as the linker in our toolchain mainly as it is way
   # faster when linking Tor Browser code (especially libxul). But apart from
   # that it fixes #12103 and issues with ESR 31 and our Gitian setup as well
@@ -129,24 +127,20 @@ script: |
   export PATH="$INSTDIR/binutils/bin:$INSTDIR/gcc/bin:$PATH"
   export LD_LIBRARY_PATH="$INSTDIR/gcc/lib$ARCH"
 
-  # XXX: 64bits only for now :(, see #20683.
-  if [ $GBUILD_BITS == "64" ];
-  then
-    # Building Elfutils
-    tar xjf elfutils.tar.bz2
-    cd elfutils*/
-    ./configure --prefix=$INSTDIR/elfutils
-    make $MAKEOPTS
-    make install
-    cd ..
+  # Building Elfutils
+  tar xjf elfutils.tar.bz2
+  cd elfutils*/
+  ./configure --prefix=$INSTDIR/elfutils
+  make $MAKEOPTS
+  make install
+  cd ..
 
-    # Building Selfrando
-    cd selfrando
-    scons -Q arch=x86_64 LIBELF_PATH="$INSTDIR/elfutils" FORCE_INPLACE=1 DEBUG_LEVEL=env WRITE_LAYOUTS=env LOG=console
-    mkdir -p $INSTDIR/selfrando
-    cp out/x86_64/bin/* $INSTDIR/selfrando/
-    cd ..
-  fi
+  # Building Selfrando
+  cd selfrando
+  scons -Q arch=$SR_ARCH LIBELF_PATH="$INSTDIR/elfutils" FORCE_INPLACE=1 DEBUG_LEVEL=env WRITE_LAYOUTS=env LOG=console
+  mkdir -p $INSTDIR/selfrando
+  cp out/$SR_ARCH/bin/* $INSTDIR/selfrando/
+  cd ..
 
   # Building Libevent
   cd libevent
@@ -221,9 +215,5 @@ script: |
   ~/build/dzip.sh libevent-${LIBEVENT_TAG#release-}-linux$GBUILD_BITS-utils.zip libevent
   ~/build/dzip.sh gmp-$GMP_VER-linux$GBUILD_BITS-utils.zip gmp
   ~/build/dzip.sh go-$GO_VER-linux$GBUILD_BITS-utils.zip go
-  # XXX: 64bits only for now :(, see #20683.
-  if [ $GBUILD_BITS == "64" ];
-  then
-    ~/build/dzip.sh selfrando-$SELFRANDO_TAG-linux$GBUILD_BITS-utils.zip selfrando
-  fi
+  ~/build/dzip.sh selfrando-$SELFRANDO_TAG-linux$GBUILD_BITS-utils.zip selfrando
   cp *utils.zip $OUTDIR/

@@ -96,10 +96,10 @@ then
   PYPTLIB_TAG=refs/tags/$PYPTLIB_TAG
   OBFSPROXY_TAG=refs/tags/$OBFSPROXY_TAG
   OBFS4_TAG=refs/tags/$OBFS4_TAG
+  SELFRANDO_TAG=refs/tags/$SELFRANDO_TAG
 fi
 
 cd $GITIAN_DIR
-# XXX: 64bits selfrando only for now :(, see #20683.
 if [ ! -f inputs/binutils-$BINUTILS_VER-linux32-utils.zip -o \
      ! -f inputs/binutils-$BINUTILS_VER-linux64-utils.zip -o \
      ! -f inputs/gcc-$GCC_VER-linux32-utils.zip -o \
@@ -112,6 +112,7 @@ if [ ! -f inputs/binutils-$BINUTILS_VER-linux32-utils.zip -o \
      ! -f inputs/gmp-$GMP_VER-linux64-utils.zip -o \
      ! -f inputs/go-$GO_VER-linux32-utils.zip -o \
      ! -f inputs/go-$GO_VER-linux64-utils.zip -o \
+     ! -f inputs/selfrando-$SELFRANDO_TAG-linux32-utils.zip -o \
      ! -f inputs/selfrando-$SELFRANDO_TAG-linux64-utils.zip ];
 then
   echo
@@ -139,6 +140,7 @@ then
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG-linux32-utils.zip selfrando-linux32-utils.zip
   ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
   #cp -a result/utils-linux-res.yml inputs/
@@ -161,6 +163,7 @@ else
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG-linux32-utils.zip selfrando-linux32-utils.zip
   ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
 fi
