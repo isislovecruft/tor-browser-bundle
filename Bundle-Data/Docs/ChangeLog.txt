@@ -48,7 +48,6 @@ Tor Browser 7.5a4 -- August 9 2017
 Tor Browser 7.5a3 -- July 28 2017
  * Linux
    * Bug 23044: Don't allow GIO supported protocols by default
-   * Bug 22829: Remove default obfs4 bridge riemann.
 
 Tor Browser 7.0.3 -- July 27 2017
  * Linux
