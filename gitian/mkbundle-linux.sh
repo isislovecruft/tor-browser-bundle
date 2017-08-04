@@ -78,6 +78,7 @@ die_msg() {
 # the utils both if we verify tags and if we don't.
 
 LIBEVENT_TAG_ORIG=$LIBEVENT_TAG
+SELFRANDO_TAG_ORIG=$SELFRANDO_TAG
 
 if [ "z$VERIFY_TAGS" = "z1" ];
 then
@@ -112,8 +113,8 @@ if [ ! -f inputs/binutils-$BINUTILS_VER-linux32-utils.zip -o \
      ! -f inputs/gmp-$GMP_VER-linux64-utils.zip -o \
      ! -f inputs/go-$GO_VER-linux32-utils.zip -o \
      ! -f inputs/go-$GO_VER-linux64-utils.zip -o \
-     ! -f inputs/selfrando-$SELFRANDO_TAG-linux32-utils.zip -o \
-     ! -f inputs/selfrando-$SELFRANDO_TAG-linux64-utils.zip ];
+     ! -f inputs/selfrando-$SELFRANDO_TAG_ORIG-linux32-utils.zip -o \
+     ! -f inputs/selfrando-$SELFRANDO_TAG_ORIG-linux64-utils.zip ];
 then
   echo
   echo "****** Starting Utilities Component of Linux Bundle (1/7 for Linux) ******"
@@ -140,8 +141,8 @@ then
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux32-utils.zip selfrando-linux32-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG_ORIG-linux32-utils.zip selfrando-linux32-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG_ORIG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
   #cp -a result/utils-linux-res.yml inputs/
 else
@@ -163,8 +164,8 @@ else
   ln -sf gmp-$GMP_VER-linux64-utils.zip gmp-linux64-utils.zip
   ln -sf go-$GO_VER-linux32-utils.zip go-linux32-utils.zip
   ln -sf go-$GO_VER-linux64-utils.zip go-linux64-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux32-utils.zip selfrando-linux32-utils.zip
-  ln -sf selfrando-$SELFRANDO_TAG-linux64-utils.zip selfrando-linux64-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG_ORIG-linux32-utils.zip selfrando-linux32-utils.zip
+  ln -sf selfrando-$SELFRANDO_TAG_ORIG-linux64-utils.zip selfrando-linux64-utils.zip
   cd ..
 fi
 
