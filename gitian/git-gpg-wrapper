@@ -8,6 +8,12 @@ if [ $# -eq 4 ] && [ "$1" = '--status-fd=1' ] \
 then
     gpgv "$1" "$3" "$4" | sed 's/^\[GNUPG:\] EXPKEYSIG /\[GNUPG:\] GOODSIG /'
     exit ${PIPESTATUS[0]}
+# git >= 2.10.0-rc0 is calling gpg with 5 args. See #20757
+elif [ $# -eq 5 ] && [ "$1" = '--status-fd=1' ] \
+        && [ "$2" = '--keyid-format=long' ] && [ "$3" = '--verify' ]
+then
+    gpgv "$1" "$4" "$5" | sed 's/^\[GNUPG:\] EXPKEYSIG /\[GNUPG:\] GOODSIG /'
+    exit ${PIPESTATUS[0]}
 else
     exec gpg "$@"
 fi
