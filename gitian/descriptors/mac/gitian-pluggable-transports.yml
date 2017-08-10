@@ -231,8 +231,8 @@ script: |
   cmp client client.stomped && (echo "No paths replaced in snowflake-client. Maybe the replacement failed or is no longer needed. Check descriptors/mac/gitian-pluggable-transports.yml"; exit 1)
   cp -a client.stomped $PTDIR/snowflake-client
   cd ..
-  mkdir -p $INSTDIR/Docs/snowflake
-  cp -a README.md LICENSE $INSTDIR/Docs/snowflake
+  mkdir -p $DOCSDIR/snowflake
+  cp -a README.md LICENSE $DOCSDIR/snowflake
   cd ..
 
   # Grabbing the result
